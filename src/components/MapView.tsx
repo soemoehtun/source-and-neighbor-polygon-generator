@@ -9,100 +9,7 @@ import { SearchPanel, ParametersPanel } from './ControlPanels';
 
 export { colorFor };
 
-const BASEMAPS = [
-  {
-    id: 'light',
-    label: 'Map',
-    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    thumb: 'https://a.basemaps.cartocdn.com/light_all/12/3143/1852.png',
-    bg: '#f8fafc',
-    accent: '#cbd5e1',
-  },
-  {
-    id: 'street',
-    label: 'Street',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap contributors',
-    thumb: 'https://tile.openstreetmap.org/12/3143/1852.png',
-    bg: '#f0eadb',
-    accent: '#fff',
-  },
-  {
-    id: 'satellite',
-    label: 'Satellite',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri',
-    thumb: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/12/1852/3143',
-    bg: '#1a3a2a',
-    accent: '#468058',
-  },
-  {
-    id: 'topo',
-    label: 'Topo',
-    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap contributors, SRTM · Map style: &copy; OpenTopoMap',
-    thumb: 'https://a.tile.opentopomap.org/12/3143/1852.png',
-    bg: '#e8dcc8',
-    accent: '#a07c58',
-  },
-] as const;
-
-const MapThumb: React.FC<{ id: string }> = ({ id }) => {
-  if (id === 'street')
-    return (
-      <svg viewBox="0 0 60 60" className="h-full w-full">
-        <rect width="60" height="60" fill="#f0eadb" />
-        <line x1="0" y1="30" x2="60" y2="30" stroke="#fff" strokeWidth="2.5" />
-        <line x1="30" y1="0" x2="30" y2="60" stroke="#fff" strokeWidth="2.5" />
-        <line x1="0" y1="45" x2="60" y2="45" stroke="#fff" strokeWidth="1.5" />
-        <line x1="45" y1="0" x2="45" y2="60" stroke="#fff" strokeWidth="1.5" />
-        <rect x="8" y="14" width="12" height="10" rx="1" fill="#ffd6a5" stroke="#e8a050" strokeWidth="0.5" />
-        <rect x="36" y="36" width="14" height="10" rx="1" fill="#cde0ff" stroke="#90b4d8" strokeWidth="0.5" />
-        <rect x="48" y="14" width="10" height="10" rx="1" fill="#f7c6c7" stroke="#d49092" strokeWidth="0.5" />
-      </svg>
-    );
-  if (id === 'satellite')
-    return (
-      <svg viewBox="0 0 60 60" className="h-full w-full">
-        <rect width="60" height="60" fill="#1a3a2a" />
-        <rect x="0" y="0" width="28" height="26" fill="#2a5a3a" />
-        <rect x="26" y="20" width="34" height="18" fill="#1e4a30" />
-        <rect x="5" y="28" width="20" height="28" fill="#22482e" />
-        <circle cx="40" cy="12" r="8" fill="#3a7a50" opacity="0.6" />
-        <circle cx="18" cy="48" r="6" fill="#347048" opacity="0.5" />
-      </svg>
-    );
-  if (id === 'topo')
-    return (
-      <svg viewBox="0 0 60 60" className="h-full w-full">
-        <rect width="60" height="60" fill="#e8dcc8" />
-        <ellipse cx="30" cy="28" rx="24" ry="16" fill="none" stroke="#a07c58" strokeWidth="0.8" />
-        <ellipse cx="30" cy="28" rx="16" ry="10" fill="none" stroke="#a07c58" strokeWidth="0.8" />
-        <ellipse cx="30" cy="28" rx="8" ry="5" fill="none" stroke="#a07c58" strokeWidth="0.8" />
-        <path d="M5 48 Q20 40 35 45 Q50 50 58 44" fill="none" stroke="#5078b0" strokeWidth="1.2" />
-        <text x="8" y="54" fontSize="6" fill="#a07c58" fontFamily="sans-serif">200</text>
-        <text x="22" y="22" fontSize="6" fill="#a07c58" fontFamily="sans-serif">500</text>
-      </svg>
-    );
-  return (
-    <svg viewBox="0 0 60 60" className="h-full w-full">
-      <rect width="60" height="60" fill="#f8fafc" />
-      <line x1="0" y1="20" x2="60" y2="20" stroke="#cbd5e1" strokeWidth="1" />
-      <line x1="0" y1="40" x2="60" y2="40" stroke="#cbd5e1" strokeWidth="1" />
-      <line x1="20" y1="0" x2="20" y2="60" stroke="#cbd5e1" strokeWidth="1" />
-      <line x1="40" y1="0" x2="40" y2="60" stroke="#cbd5e1" strokeWidth="1" />
-      <rect x="25" y="25" width="10" height="10" rx="1" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="0.5" />
-      <rect x="8" y="42" width="8" height="8" rx="1" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="0.5" />
-    </svg>
-  );
-};
-
-function MapPreview({ id, src }: { id: string; src: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) return <MapThumb id={id} />;
-  return <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(true)} />;
-}
+const SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 
 
 
@@ -218,7 +125,6 @@ export default function MapView({
   const [mouseLat, setMouseLat] = useState<number | null>(null);
   const [mouseLng, setMouseLng] = useState<number | null>(null);
   const [paramsOpen, setParamsOpen] = useState(true);
-  const [layerExpanded, setLayerExpanded] = useState(false);
 
   // Live preview distance from last point to cursor.
   const previewKm = useMemo(() => {
@@ -244,8 +150,6 @@ export default function MapView({
     km >= 1
       ? `${km.toFixed(km >= 10 ? 1 : 3)} km`
       : `${Math.round(km * 1000)} m`;
-  const [basemap, setBasemap] = useState<string>('light');
-  const active = BASEMAPS.find((b) => b.id === basemap) ?? BASEMAPS[0];
   const visible = selected === null ? results : results.filter((_, i) => i === selected);
 
   const bounds = useMemo<LatLngBoundsExpression | null>(() => {
@@ -271,7 +175,7 @@ export default function MapView({
         attributionControl={false}
         scrollWheelZoom
       >
-        <TileLayer key={active.id} url={active.url} />
+        <TileLayer url={SATELLITE_URL} attribution="Tiles &copy; Esri" />
         <FitBounds bounds={bounds} />
         <InvalidateSize />
         <RulerHandler
@@ -416,68 +320,8 @@ export default function MapView({
         })}
       </MapContainer>
 
-      {/* Google Earth-style layer switcher — mobile only (collapsed thumbnail that expands) */}
-      <div className="absolute right-4 top-4 z-[1000] md:hidden">
-        {!layerExpanded ? (
-          <button
-            onClick={() => setLayerExpanded(true)}
-            className="h-11 w-11 overflow-hidden rounded border-2 border-white bg-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
-            aria-label="Change map layer"
-          >
-            <MapPreview id={active.id} src={active.thumb} />
-          </button>
-        ) : (
-          <div className="flex gap-2 rounded-lg bg-white p-2 shadow-[0_4px_20px_rgba(15,23,42,0.2)]">
-            {BASEMAPS.map((b) => (
-              <button
-                key={b.id}
-                onClick={() => {
-                  setBasemap(b.id);
-                  setLayerExpanded(false);
-                }}
-                className={`w-[68px] rounded-md p-1 text-center transition hover:bg-slate-100 ${
-                  basemap === b.id ? 'bg-blue-50' : ''
-                }`}
-              >
-                <span
-                  className={`mx-auto block h-[60px] w-[60px] overflow-hidden rounded border-2 ${
-                    basemap === b.id ? 'border-blue-600' : 'border-transparent'
-                  }`}
-                >
-                  <MapPreview id={b.id} src={b.thumb} />
-                </span>
-                <span
-                  className={`mt-1 block truncate text-[10px] font-semibold ${
-                    basemap === b.id ? 'text-blue-600' : 'text-slate-600'
-                  }`}
-                >
-                  {b.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Right-side stacked controls: basemap switcher, then source data filter — desktop */}
+      {/* Right-side stacked controls: ruler tool, then source data filter — desktop */}
       <div className="absolute right-4 top-4 z-[1000] hidden w-64 flex-col gap-2 md:flex">
-        {/* Basemap switcher — full width, rectangle */}
-        <div className="flex gap-0.5 rounded-md bg-white/95 p-0.5 shadow-lg ring-1 ring-slate-200">
-          {BASEMAPS.map((b) => (
-            <button
-              key={b.id}
-              onClick={() => setBasemap(b.id)}
-              className={`flex-1 rounded px-2 py-1.5 text-[10px] font-semibold transition ${
-                basemap === b.id
-                  ? 'bg-slate-900 text-white'
-                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'
-              }`}
-            >
-              {b.label}
-            </button>
-          ))}
-        </div>
-
         {/* Ruler tool — desktop only */}
         <div className="hidden rounded-lg bg-white/95 p-3 shadow-lg ring-1 ring-slate-200 md:block">
           <div className="flex items-center justify-between">
